@@ -16,20 +16,23 @@ import java.util.Set;
 
 public class State {
     public final Banner banner;
-
     public final int currentMission;
-
     public final boolean error;
-
     public final boolean cooldown;
-
     public final Location currentLocation;
-
     public final ImmutableSet<Integer> currentMissionVisitedStepIndexes;
-
     public final boolean locationEnabled;
+    public final boolean paused;
+    /**
+     * True once the user has actually launched a mission (tapped Start/Next).
+     * Navigating with +/- does NOT set this. Used to keep the overlay visible
+     * in notification-controls mode until the first real launch.
+     */
+    public final boolean hasLaunched;
 
-    private State(Banner banner, int currentMission, boolean error, boolean cooldown, Location currentLocation, ImmutableSet<Integer> currentMissionVisitedStepIndexes, boolean locationEnabled) {
+    private State(Banner banner, int currentMission, boolean error, boolean cooldown,
+                  Location currentLocation, ImmutableSet<Integer> currentMissionVisitedStepIndexes,
+                  boolean locationEnabled, boolean paused, boolean hasLaunched) {
         this.banner = banner;
         this.currentMission = currentMission;
         this.error = error;
@@ -37,10 +40,12 @@ public class State {
         this.currentLocation = currentLocation;
         this.currentMissionVisitedStepIndexes = currentMissionVisitedStepIndexes;
         this.locationEnabled = locationEnabled;
+        this.paused = paused;
+        this.hasLaunched = hasLaunched;
     }
 
     static State initial() {
-        return new State(null, -1, false, false, null, ImmutableSet.of(), false);
+        return new State(null, -1, false, false, null, ImmutableSet.of(), false, false, false);
     }
 
     static State terminal() {
@@ -48,16 +53,33 @@ public class State {
     }
 
     static State error() {
-        return new State(null, -1, true, false, null, ImmutableSet.of(), false);
+        return new State(null, -1, true, false, null, ImmutableSet.of(), false, false, false);
+    }
+
+    State pause() {
+        return new State(this.banner, this.currentMission, this.error, this.cooldown,
+                this.currentLocation, this.currentMissionVisitedStepIndexes,
+                this.locationEnabled, true, this.hasLaunched);
+    }
+
+    State resume() {
+        return new State(this.banner, this.currentMission, this.error, this.cooldown,
+                this.currentLocation, this.currentMissionVisitedStepIndexes,
+                this.locationEnabled, false, this.hasLaunched);
     }
 
     State previousMission() {
-        return new State(this.banner, this.currentMission - 1, false, false, this.currentLocation, ImmutableSet.of(), this.locationEnabled)
+        return new State(this.banner, this.currentMission - 1, false, false,
+                this.currentLocation, ImmutableSet.of(), this.locationEnabled, this.paused, this.hasLaunched)
                 .applyLocation();
     }
 
     State nextMission(boolean cooldown) {
-        return new State(this.banner, this.currentMission + 1, false, cooldown, this.currentLocation, ImmutableSet.of(), this.locationEnabled)
+        // cooldown=true means the user actually tapped Start/Next and launched Ingress.
+        // cooldown=false means the + button was used to navigate without launching.
+        return new State(this.banner, this.currentMission + 1, false, cooldown,
+                this.currentLocation, ImmutableSet.of(), this.locationEnabled, this.paused,
+                this.hasLaunched || cooldown)
                 .applyLocation();
     }
 
@@ -66,28 +88,38 @@ public class State {
     }
 
     State bannerLoaded(Banner banner, int currentMission) {
-        return new State(banner, currentMission, false, false, this.currentLocation, ImmutableSet.of(), this.locationEnabled)
+        return new State(banner, currentMission, false, false, this.currentLocation,
+                ImmutableSet.of(), this.locationEnabled, false, false)
                 .applyLocation();
     }
 
     State cooldownFinished() {
-        return new State(this.banner, this.currentMission, this.error, false, this.currentLocation, this.currentMissionVisitedStepIndexes, this.locationEnabled);
+        return new State(this.banner, this.currentMission, this.error, false,
+                this.currentLocation, this.currentMissionVisitedStepIndexes,
+                this.locationEnabled, this.paused, this.hasLaunched);
     }
 
     State location(Location location) {
-        return new State(this.banner, this.currentMission, this.error, this.cooldown, location, this.currentMissionVisitedStepIndexes, this.locationEnabled).applyLocation();
+        return new State(this.banner, this.currentMission, this.error, this.cooldown,
+                location, this.currentMissionVisitedStepIndexes,
+                this.locationEnabled, this.paused, this.hasLaunched).applyLocation();
     }
 
     State locationEnabled() {
-        return new State(this.banner, this.currentMission, this.error, this.cooldown, this.currentLocation, this.currentMissionVisitedStepIndexes, true);
+        return new State(this.banner, this.currentMission, this.error, this.cooldown,
+                this.currentLocation, this.currentMissionVisitedStepIndexes,
+                true, this.paused, this.hasLaunched);
     }
 
     private State applyLocation() {
-        ImmutableSet<Integer> currentMissionVisitedStepIndexes = calculateStepIndexesInRange(this.banner, this.currentMission, this.currentMissionVisitedStepIndexes, this.currentLocation);
-        return new State(this.banner, this.currentMission, this.error, this.cooldown, this.currentLocation, currentMissionVisitedStepIndexes, this.locationEnabled);
+        ImmutableSet<Integer> visited = calculateStepIndexesInRange(
+                this.banner, this.currentMission, this.currentMissionVisitedStepIndexes, this.currentLocation);
+        return new State(this.banner, this.currentMission, this.error, this.cooldown,
+                this.currentLocation, visited, this.locationEnabled, this.paused, this.hasLaunched);
     }
 
-    ImmutableSet<Integer> calculateStepIndexesInRange(Banner banner, int currentMission, ImmutableSet<Integer> finishedSteps, Location location) {
+    ImmutableSet<Integer> calculateStepIndexesInRange(Banner banner, int currentMission,
+                                                       ImmutableSet<Integer> finishedSteps, Location location) {
         if (banner == null || currentMission < 0 || currentMission >= banner.missions.size()) {
             return ImmutableSet.of();
         } else if (location == null) {
@@ -111,6 +143,7 @@ public class State {
             return builder.build();
         }
     }
+
     static ImmutableMap<Integer, MissionStep> getNewStepsInRange(State newState, State oldState) {
         Set<Integer> newStepsInRange;
         if (newState.currentMission != oldState.currentMission) {
@@ -127,5 +160,4 @@ public class State {
         }
         return result.build();
     }
-
 }

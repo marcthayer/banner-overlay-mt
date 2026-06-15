@@ -35,6 +35,12 @@
             app:persistent="false"
             app:title="@string/preferences_notification_step_in_range" />
 
+        <SwitchPreference
+            app:defaultValue="false"
+            app:key="@string/notification_controls_enable"
+            app:title="@string/preferences_notification_controls_enable"
+            app:summary="@string/preferences_notification_controls_enable_summary" />
+
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/preferences_clipboard">
@@ -43,6 +49,7 @@
             app:key="@string/clipboard_enable"
             app:defaultValue="false"
             app:title="@string/preferences_clipboard_enable" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

@@ -23,6 +23,18 @@
     <string name="objectiveEnterPassphrase">Enter passphrase</string>
     <string name="clipDataLabel">Mission number</string>
 
+    <!-- Notification action button labels -->
+    <string name="notificationActionPause">Hide</string>
+    <string name="notificationActionResume">Show</string>
+    <string name="notificationActionPrev">← Back</string>
+    <!-- %1$d = next mission number (1-based), %2$d = total missions -->
+    <string name="notificationActionNext">Next %1$d/%2$d →</string>
+    <string name="notificationActionStart">Start 1/%2$d →</string>
+
+    <!-- Preference keys (used as SharedPreferences keys) -->
+    <string name="notification_controls_enable" translatable="false">notification_controls_enable</string>
+
+    <!-- Settings screen -->
     <string name="preferences_title">Settings</string>
     <string name="preferences_introduction">This companion app to Ingress Prime lets you keep an eye on the banner you are currently passing through.\n\nTo start progress tracking, just share a Bannergress banner link with the app.</string>
     <string name="preferences_location">Location</string>
@@ -31,6 +43,8 @@
     <string name="preferences_notifications_enable">Use notifications</string>
     <string name="preferences_notification_progress">Progress</string>
     <string name="preferences_notification_step_in_range">Next step in range</string>
+    <string name="preferences_notification_controls_enable">Use notification controls</string>
+    <string name="preferences_notification_controls_enable_summary">Move −/Next/+ buttons to the notification and hide the on-screen overlay</string>
     <string name="preferences_clipboard">Clipboard</string>
     <string name="preferences_clipboard_enable">Copy mission number as passphrase</string>
 </resources>

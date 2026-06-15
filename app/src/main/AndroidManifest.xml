@@ -17,10 +17,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BannerOverlay"
         tools:targetApi="31">
+
         <service
             android:name=".OverlayService"
             android:foregroundServiceType="location" />
+
         <receiver android:name=".StopDetectionReceiver" />
+
+        <!-- Handles Pause, Resume, Prev, Next actions from the persistent notification -->
+        <receiver
+            android:name=".NotificationActionReceiver"
+            android:exported="false" />
 
         <activity
             android:name=".MainActivity"
@@ -44,9 +51,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
     <queries>
         <package android:name="com.nianticproject.ingress" />
     </queries>
+
 </manifest>

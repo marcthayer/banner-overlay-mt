@@ -2,7 +2,7 @@
 
 A companion app for [Ingress Prime](https://ingress.com/) that keeps track of your current [Bannergress](https://bannergress.com/) banner and lets you launch missions without switching apps.
 
-> **Note:** This is a personal fork of [bannergress/banner-overlay](https://github.com/bannergress/banner-overlay) with additional features. See [What's different](#whats-different) below.
+> **Note:** This is a personal fork of [bannergress/banner-overlay](https://github.com/bannergress/banner-overlay) with additional features. See [What's different](#whats-different-from-upstream) below.
 
 ---
 

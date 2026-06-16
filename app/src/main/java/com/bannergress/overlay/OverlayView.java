@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
 import android.os.Handler;
 import android.os.Looper;
@@ -57,6 +58,9 @@ class OverlayView extends FrameLayout {
                 WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.RGB_888);
         params.gravity = Gravity.START | Gravity.TOP;
+        SharedPreferences posPrefs = context.getSharedPreferences("overlay_position", Context.MODE_PRIVATE);
+        params.x = posPrefs.getInt("x", 0);
+        params.y = posPrefs.getInt("y", 0);
         setupListeners();
         applyState(StateManager.getState());
         loadData(data, context);

@@ -1,6 +1,8 @@
 package com.bannergress.overlay;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -34,6 +36,14 @@ public class ViewMoveListener implements View.OnTouchListener {
                 view.getWindowParams().x = (int) (pointerX - pointerStartX + windowStartX);
                 view.getWindowParams().y = (int) (pointerY - pointerStartY + windowStartY);
                 windowManager.updateViewLayout(view, view.getWindowParams());
+                break;
+            case MotionEvent.ACTION_UP:
+                SharedPreferences prefs = view.getContext().getSharedPreferences(
+                        "overlay_position", Context.MODE_PRIVATE);
+                prefs.edit()
+                        .putInt("x", view.getWindowParams().x)
+                        .putInt("y", view.getWindowParams().y)
+                        .apply();
                 break;
         }
         return true;

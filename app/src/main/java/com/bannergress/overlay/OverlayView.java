@@ -81,7 +81,7 @@ class OverlayView extends FrameLayout {
             if (optionalNextMission.isPresent()) {
                 Ingress.tryLaunchMission(getContext(), optionalNextMission.get().id);
                 StateManager.updateState(state -> state.nextMission(true));
-                new Handler().postDelayed(() -> StateManager.updateState(State::cooldownFinished), COOLDOWN_MILLIS);
+                new Handler(Looper.getMainLooper()).postDelayed(() -> StateManager.updateState(State::cooldownFinished), COOLDOWN_MILLIS);
             } else {
                 Intent serviceIntent = new Intent();
                 serviceIntent.setComponent(new ComponentName(getContext(), OverlayService.class));

@@ -19,3 +19,15 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Keep API model classes used by Jackson for JSON deserialization
+-keep class com.bannergress.overlay.api.** { *; }
+-keepattributes *Annotation*
+
+# Jackson
+-keep class com.fasterxml.jackson.** { *; }
+-dontwarn com.fasterxml.jackson.**
+
+# OkHttp
+-dontwarn okhttp3.**
+-dontwarn okio.**

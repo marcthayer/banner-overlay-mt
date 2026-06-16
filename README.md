@@ -15,6 +15,7 @@ When you're walking a banner in Ingress, you normally have to switch between Ing
 - **Mission counter** — shows your current position in the banner (e.g. 3/18)
 - **One-tap mission launch** — opens the next mission directly in Ingress
 - **Hide/Show** — temporarily hide the overlay without stopping tracking
+- **Persistent position** — the overlay remembers where you dragged it between sessions
 - **Notification controls** — move navigation buttons into the persistent notification instead of the on-screen overlay (useful if the overlay gets in the way)
 - **Location-based step tracking** — highlights waypoints as you approach them
 - **Works with Bannergress links and Intel Mission links**
@@ -24,6 +25,8 @@ When you're walking a banner in Ingress, you normally have to switch between Ing
 This fork adds two features not in the original app:
 
 **Hide/Show overlay** — A Hide button in the persistent notification collapses the overlay off-screen while keeping location tracking and progress running. Tap Show to bring it back.
+
+**Persistent overlay position** — The overlay remembers where you dragged it and restores that position the next time you start a session.
 
 **Notification controls** — An optional setting (in Settings → Use notification controls) that moves the − / Next / + navigation buttons into the persistent notification and auto-hides the on-screen overlay. The overlay stays visible until you tap Start for the first time, so you can use +/− to pick your starting mission before launching.
 
@@ -95,7 +98,7 @@ The APK will be at `app/build/outputs/apk/debug/app-debug.apk`.
 
 ## Credits
 
-Original app by the [Bannergress team](https://github.com/bannergress). This fork adds the hide/show and notification controls features.
+Original app by the [Bannergress team](https://github.com/bannergress). This fork adds the hide/show, persistent position, and notification controls features.
 
 ## License
 

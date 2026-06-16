@@ -1,5 +1,6 @@
 package com.bannergress.overlay;
 
+import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -7,6 +8,9 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ServiceInfo;
+import android.os.Build;
 
 import androidx.annotation.StringRes;
 import androidx.core.app.NotificationCompat;
@@ -90,7 +94,17 @@ final class ServiceNotification {
                 .setOngoing(true)
                 .build();
 
-        context.startForeground(DEFAULT_NOTIFICATION_ID, notification);
+        // Use location FGS type only when the permission is actually granted.
+        // Without it, fall back to dataSync so the overlay starts even without location.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            boolean hasLocation = context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED;
+            context.startForeground(DEFAULT_NOTIFICATION_ID, notification,
+                    hasLocation ? ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION
+                                : ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC);
+        } else {
+            context.startForeground(DEFAULT_NOTIFICATION_ID, notification);
+        }
     }
 
     // --- Default mode: Pause/Resume + Stop ---
